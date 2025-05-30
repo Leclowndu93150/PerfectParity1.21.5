@@ -32,14 +32,8 @@ public class WolfMixin {
     private static final Map<WolfSoundVariant, Map<String, SoundEvent>> SOUND_VARIANT_MAP =
             Util.make(Maps.newEnumMap(WolfSoundVariant.class), map -> {
                 map.put(WolfSoundVariant.CLASSIC, ModSounds.WOLF_CLASSIC);
-                map.put(WolfSoundVariant.ANGRY, ModSounds.WOLF_ANGRY);
-                map.put(WolfSoundVariant.BIG, ModSounds.WOLF_BIG);
-                map.put(WolfSoundVariant.CUTE, ModSounds.WOLF_CUTE);
-                map.put(WolfSoundVariant.GRUMPY, ModSounds.WOLF_GRUMPY);
-                map.put(WolfSoundVariant.PUGLIN, ModSounds.WOLF_PUGLIN);
-                map.put(WolfSoundVariant.SAD, ModSounds.WOLF_SAD);
+                // Other maps will be added dynamically when available
             });
-
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     public void addAdditionSaveData(CompoundTag compoundTag, CallbackInfo ci) {
@@ -53,7 +47,7 @@ public class WolfMixin {
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
     protected void defineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
-        builder.define(DATA_SOUND_VARIANT_ID, "minecraft:normal");
+        builder.define(DATA_SOUND_VARIANT_ID, "minecraft:classic");
     }
 
     public WolfSoundVariant getSoundVariant() {
@@ -73,18 +67,69 @@ public class WolfMixin {
         this.setSoundVariant(WolfSoundVariant.getRandom());
     }
 
+    private SoundEvent getSafeSound(String soundType) {
+        WolfSoundVariant variant = this.getSoundVariant();
+
+        // First try to get from the static map
+        Map<String, SoundEvent> soundMap = SOUND_VARIANT_MAP.get(variant);
+        if (soundMap != null && soundMap.get(soundType) != null) {
+            return soundMap.get(soundType);
+        }
+
+        // If not available, try to get from ModSounds (in case they've been initialized)
+        try {
+            switch (variant) {
+                case PUGLIN:
+                    if (ModSounds.WOLF_PUGLIN != null) return ModSounds.WOLF_PUGLIN.get(soundType);
+                    break;
+                case SAD:
+                    if (ModSounds.WOLF_SAD != null) return ModSounds.WOLF_SAD.get(soundType);
+                    break;
+                case ANGRY:
+                    if (ModSounds.WOLF_ANGRY != null) return ModSounds.WOLF_ANGRY.get(soundType);
+                    break;
+                case GRUMPY:
+                    if (ModSounds.WOLF_GRUMPY != null) return ModSounds.WOLF_GRUMPY.get(soundType);
+                    break;
+                case BIG:
+                    if (ModSounds.WOLF_BIG != null) return ModSounds.WOLF_BIG.get(soundType);
+                    break;
+                case CUTE:
+                    if (ModSounds.WOLF_CUTE != null) return ModSounds.WOLF_CUTE.get(soundType);
+                    break;
+                case CLASSIC:
+                default:
+                    if (ModSounds.WOLF_CLASSIC != null) return ModSounds.WOLF_CLASSIC.get(soundType);
+                    break;
+            }
+        } catch (Exception e) {
+            // Fallback to vanilla sounds if anything goes wrong
+        }
+
+        // Final fallback to vanilla sounds
+        return switch (soundType) {
+            case "growl" -> SoundEvents.WOLF_GROWL;
+            case "whine" -> SoundEvents.WOLF_WHINE;
+            case "pant" -> SoundEvents.WOLF_PANT;
+            case "hurt" -> SoundEvents.WOLF_HURT;
+            case "death" -> SoundEvents.WOLF_DEATH;
+            default -> SoundEvents.WOLF_AMBIENT;
+        };
+    }
+
     /**
      * @author timelord1102
      * @reason adding sound variant logic
      */
     @Overwrite
     public SoundEvent getAmbientSound() {
-        if (((NeutralMob)this).isAngry()) {
-            return (SoundEvent)SOUND_VARIANT_MAP.get(this.getSoundVariant()).get("growl");
+        if (((NeutralMob)(Object)this).isAngry()) {
+            return getSafeSound("growl");
         } else if (((Entity)(Object)this).getRandom().nextInt(3) == 0) {
-            return ((TamableAnimal)(Object)this).isTame() && ((LivingEntity)(Object)this).getHealth() < 20.0F ? SOUND_VARIANT_MAP.get(this.getSoundVariant()).get("whine") : SOUND_VARIANT_MAP.get(this.getSoundVariant()).get("pant");
+            return ((TamableAnimal)(Object)this).isTame() && ((LivingEntity)(Object)this).getHealth() < 20.0F ?
+                    getSafeSound("whine") : getSafeSound("pant");
         } else {
-            return (SoundEvent)SOUND_VARIANT_MAP.get(this.getSoundVariant()).get("ambient");
+            return getSafeSound("ambient");
         }
     }
 
@@ -94,7 +139,7 @@ public class WolfMixin {
      */
     @Overwrite
     public SoundEvent getHurtSound(DamageSource damageSource) {
-        return ((WolfInvoker) this).callCanArmorAbsorb(damageSource) ? SoundEvents.WOLF_ARMOR_DAMAGE : SOUND_VARIANT_MAP.get(this.getSoundVariant()).get("hurt");
+        return ((WolfInvoker) this).callCanArmorAbsorb(damageSource) ? SoundEvents.WOLF_ARMOR_DAMAGE : getSafeSound("hurt");
     }
 
     /**
@@ -103,7 +148,7 @@ public class WolfMixin {
      */
     @Overwrite
     public SoundEvent getDeathSound() {
-        return SOUND_VARIANT_MAP.get(this.getSoundVariant()).get("death");
+        return getSafeSound("death");
     }
 
     /**

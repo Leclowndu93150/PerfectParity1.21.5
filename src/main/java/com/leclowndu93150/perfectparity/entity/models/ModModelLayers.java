@@ -20,7 +20,7 @@ public class ModModelLayers {
     public static final ModelLayerLocation NEW_PIG_BABY = registerLayer("new_pig_baby");
 
     private static ModelLayerLocation registerLayer(String name) {
-        // “main” is the layer variant—most models just use “main”
+        // Use minecraft namespace as expected by renderers
         return new ModelLayerLocation(ResourceLocation.withDefaultNamespace(name), "main");
     }
 }

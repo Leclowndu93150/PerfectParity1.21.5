@@ -71,9 +71,14 @@ public class ModSounds {
     public static final Supplier<SoundEvent> WOLF_CUTE_DEATH = registerSoundEvent("entity.wolf_cute.death");
     public static final Supplier<SoundEvent> WOLF_CUTE_HURT = registerSoundEvent("entity.wolf_cute.hurt");
 
-    // Sound types (need to be created after sound events are available)
-    public static SoundType CACTUS_FLOWER;
-    public static SoundType LEAF_LITTER;
+    // Sound types using suppliers to avoid null reference issues
+    public static final Supplier<SoundType> CACTUS_FLOWER = () -> new SoundType(1.0F, 1.0F,
+            CACTUS_FLOWER_BREAK.get(), SoundEvents.EMPTY, CACTUS_FLOWER_PLACE.get(),
+            SoundEvents.EMPTY, SoundEvents.EMPTY);
+
+    public static final Supplier<SoundType> LEAF_LITTER = () -> new SoundType(1.0F, 1.0F,
+            LEAF_LITTER_BREAK.get(), LEAF_LITTER_STEP.get(), LEAF_LITTER_PLACE.get(),
+            LEAF_LITTER_HIT.get(), LEAF_LITTER_FALL.get());
 
     // Wolf sound maps
     public static final Map<String, SoundEvent> WOLF_CLASSIC = Map.of(
@@ -101,10 +106,6 @@ public class ModSounds {
     }
 
     public static void registerSounds() {
-        // Initialize sound types after registration
-        CACTUS_FLOWER = new SoundType(1.0F, 1.0F, CACTUS_FLOWER_BREAK.get(), SoundEvents.EMPTY, CACTUS_FLOWER_PLACE.get(), SoundEvents.EMPTY, SoundEvents.EMPTY);
-        LEAF_LITTER = new SoundType(1.0F, 1.0F, LEAF_LITTER_BREAK.get(), LEAF_LITTER_STEP.get(), LEAF_LITTER_PLACE.get(), LEAF_LITTER_HIT.get(), LEAF_LITTER_FALL.get());
-
         // Initialize wolf sound maps
         WOLF_PUGLIN = Map.of(
                 "ambient", WOLF_PUGLIN_AMBIENT.get(),

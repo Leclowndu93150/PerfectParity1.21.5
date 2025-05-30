@@ -15,7 +15,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = PerfectParity.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PerfectParity.MOD_ID);
 
@@ -38,48 +37,7 @@ public class ModItems {
     }
 
     public static void initialize() {
-        // Remove the manual event bus registration - @EventBusSubscriber handles this automatically
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            registerCompostable();
-        });
-    }
-
-    @SubscribeEvent
-    public static void buildCreativeModeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
-            event.insertAfter(Items.FERN.getDefaultInstance(), SHORT_DRY_GRASS.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.insertAfter(Items.LARGE_FERN.getDefaultInstance(), TALL_DRY_GRASS.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.insertAfter(SHORT_DRY_GRASS.get().getDefaultInstance(), BUSH.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.insertAfter(Items.SPORE_BLOSSOM.getDefaultInstance(), FIREFLY_BUSH.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.insertAfter(Items.TORCHFLOWER.getDefaultInstance(), CACTUS_FLOWER.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-
-            if (WILDFLOWERS != null) {
-                event.insertAfter(Items.PINK_PETALS.getDefaultInstance(), WILDFLOWERS.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-                event.insertAfter(WILDFLOWERS.get().getDefaultInstance(), LEAF_LITTER.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            } else {
-                event.insertAfter(Items.PINK_PETALS.getDefaultInstance(), LEAF_LITTER.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            }
-        }
-
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.insertAfter(Items.EGG.getDefaultInstance(), BROWN_EGG.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.insertAfter(BROWN_EGG.get().getDefaultInstance(), BLUE_EGG.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
-        if (event.getItemStack().is(LEAF_LITTER.get())) {
-            event.setBurnTime(100);
-        } else if (event.getItemStack().is(SHORT_DRY_GRASS.get())) {
-            event.setBurnTime(100);
-        } else if (event.getItemStack().is(TALL_DRY_GRASS.get())) {
-            event.setBurnTime(100);
-        }
+        // This method can be kept for any initialization logic
     }
 
     public static void registerCompostable() {
@@ -89,5 +47,53 @@ public class ModItems {
         net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(LEAF_LITTER.get(), 0.3f);
         net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(SHORT_DRY_GRASS.get(), 0.3f);
         net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(TALL_DRY_GRASS.get(), 0.3f);
+    }
+
+    // Separate event bus subscriber classes for different bus types
+    @EventBusSubscriber(modid = PerfectParity.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    public static class ModEvents {
+        @SubscribeEvent
+        public static void onCommonSetup(FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                registerCompostable();
+            });
+        }
+
+        @SubscribeEvent
+        public static void buildCreativeModeTabs(BuildCreativeModeTabContentsEvent event) {
+            if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+                event.insertAfter(Items.FERN.getDefaultInstance(), SHORT_DRY_GRASS.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(Items.LARGE_FERN.getDefaultInstance(), TALL_DRY_GRASS.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(SHORT_DRY_GRASS.get().getDefaultInstance(), BUSH.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(Items.SPORE_BLOSSOM.getDefaultInstance(), FIREFLY_BUSH.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(Items.TORCHFLOWER.getDefaultInstance(), CACTUS_FLOWER.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+
+                if (WILDFLOWERS != null) {
+                    event.insertAfter(Items.PINK_PETALS.getDefaultInstance(), WILDFLOWERS.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                    event.insertAfter(WILDFLOWERS.get().getDefaultInstance(), LEAF_LITTER.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                } else {
+                    event.insertAfter(Items.PINK_PETALS.getDefaultInstance(), LEAF_LITTER.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                }
+            }
+
+            if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+                event.insertAfter(Items.EGG.getDefaultInstance(), BROWN_EGG.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(BROWN_EGG.get().getDefaultInstance(), BLUE_EGG.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            }
+        }
+    }
+
+    @EventBusSubscriber(modid = PerfectParity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+    public static class NeoForgeEvents {
+        @SubscribeEvent
+        public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
+            if (event.getItemStack().is(LEAF_LITTER.get())) {
+                event.setBurnTime(100);
+            } else if (event.getItemStack().is(SHORT_DRY_GRASS.get())) {
+                event.setBurnTime(100);
+            } else if (event.getItemStack().is(TALL_DRY_GRASS.get())) {
+                event.setBurnTime(100);
+            }
+        }
     }
 }

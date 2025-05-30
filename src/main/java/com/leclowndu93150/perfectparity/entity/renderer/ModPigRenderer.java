@@ -49,14 +49,15 @@ public class ModPigRenderer extends MobRenderer<Pig, ModPigModel<Pig>> {
                 new ModPigModel(context.bakeLayer(ModModelLayers.NEW_PIG))
         ));
         map.put(MobVariant.WARM, new AdultAndBabyModelPair<>(
-                new ModPigModel(context.bakeLayer(ModModelLayers.COLD_PIG)),
-                new ModPigModel(context.bakeLayer(ModModelLayers.COLD_PIG))
+                new ModPigModel(context.bakeLayer(ModModelLayers.NEW_PIG)),
+                new ModPigModel(context.bakeLayer(ModModelLayers.NEW_PIG))
         ));
         map.put(MobVariant.COLD, new AdultAndBabyModelPair<>(
                 new ModPigModel(context.bakeLayer(ModModelLayers.COLD_PIG)),
                 new ModPigModel(context.bakeLayer(ModModelLayers.COLD_PIG))
         ));
-        return map;    }
+        return map;
+    }
 
     @Override
     public ResourceLocation getTextureLocation(Pig pig) {
@@ -67,9 +68,6 @@ public class ModPigRenderer extends MobRenderer<Pig, ModPigModel<Pig>> {
     public void render(Pig pig, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
         if (((VariantMob)pig).getVariant() != null) {
             this.model = (ModPigModel) ((AdultAndBabyModelPair)this.VARIANT_MODELS.get(((VariantMob)pig).getVariant())).getModel(pig.isBaby());
-            if (pig.isBaby()) {
-
-            }
             super.render(pig, f, g, poseStack, multiBufferSource, i);
         }
     }

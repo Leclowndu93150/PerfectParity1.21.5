@@ -17,9 +17,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.level.GrassColor;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
@@ -30,32 +28,53 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-@EventBusSubscriber(modid = PerfectParity.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class PerfectParityClient {
 	private static final String PATH = "/assets/minecraft/textures/colormap/dry_foliage.png";
 
-	@SubscribeEvent
+	public static void registerClientEvents(IEventBus modEventBus) {
+		modEventBus.addListener(PerfectParityClient::registerEntityRenderers);
+		modEventBus.addListener(PerfectParityClient::registerLayerDefinitions);
+		modEventBus.addListener(PerfectParityClient::registerParticleProviders);
+		modEventBus.addListener(PerfectParityClient::registerBlockColors);
+		modEventBus.addListener(PerfectParityClient::registerItemColors);
+		modEventBus.addListener(PerfectParityClient::onClientSetup);
+	}
+
 	public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+		PerfectParity.LOGGER.info("Registering entity renderers...");
 		event.registerEntityRenderer(ModEntityTypes.BLUE_EGG.get(), ThrownItemRenderer::new);
 		event.registerEntityRenderer(ModEntityTypes.BROWN_EGG.get(), ThrownItemRenderer::new);
+		PerfectParity.LOGGER.info("Entity renderers registered!");
 	}
 
-	@SubscribeEvent
 	public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+		PerfectParity.LOGGER.info("Registering model layers...");
+
 		event.registerLayerDefinition(ModModelLayers.WARM_COW, WarmCowModel::createBodyLayer);
+		PerfectParity.LOGGER.info("Registered WARM_COW: {}", ModModelLayers.WARM_COW);
+
 		event.registerLayerDefinition(ModModelLayers.COLD_COW, ColdCowModel::createBodyLayer);
+		PerfectParity.LOGGER.info("Registered COLD_COW: {}", ModModelLayers.COLD_COW);
+
 		event.registerLayerDefinition(ModModelLayers.NEW_COW, ModCowModel::createBodyLayer);
+		PerfectParity.LOGGER.info("Registered NEW_COW: {}", ModModelLayers.NEW_COW);
+
 		event.registerLayerDefinition(ModModelLayers.COLD_CHICKEN, ColdChickenModel::createBodyLayer);
+		PerfectParity.LOGGER.info("Registered COLD_CHICKEN: {}", ModModelLayers.COLD_CHICKEN);
+
 		event.registerLayerDefinition(ModModelLayers.COLD_PIG, ColdPigModel::createBodyLayer);
+		PerfectParity.LOGGER.info("Registered COLD_PIG: {}", ModModelLayers.COLD_PIG);
+
 		event.registerLayerDefinition(ModModelLayers.NEW_PIG, ModPigModel::createBodyLayer);
+		PerfectParity.LOGGER.info("Registered NEW_PIG: {}", ModModelLayers.NEW_PIG);
+
+		PerfectParity.LOGGER.info("Model layer registration complete!");
 	}
 
-	@SubscribeEvent
 	public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
 		event.registerSpriteSet(ModParticles.FIREFLY.get(), FireflyParticle.FireflyProvider::new);
 	}
 
-	@SubscribeEvent
 	public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
 		event.register(
 				(state, world, pos, tintIndex) ->
@@ -80,12 +99,10 @@ public class PerfectParityClient {
 		);
 	}
 
-	@SubscribeEvent
 	public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
 		event.register((state, tintIndex) -> GrassColor.getDefaultColor(), ModBlocks.BUSH.get().asItem());
 	}
 
-	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event) {
 		event.enqueueWork(() -> {
 			registerColormap();

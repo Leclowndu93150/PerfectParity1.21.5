@@ -33,7 +33,7 @@ public class ModBlocks {
                     .noCollission()
                     .instabreak()
                     .ignitedByLava()
-                    .sound(ModSounds.CACTUS_FLOWER)
+                    .sound(ModSounds.CACTUS_FLOWER.get()) // Use .get() to resolve supplier
                     .pushReaction(PushReaction.DESTROY)));
 
     public static final Supplier<Block> SHORT_DRY_GRASS = BLOCKS.register("short_dry_grass",
@@ -70,7 +70,7 @@ public class ModBlocks {
                     .mapColor(MapColor.COLOR_BROWN)
                     .replaceable()
                     .noCollission()
-                    .sound(ModSounds.LEAF_LITTER)
+                    .sound(ModSounds.LEAF_LITTER.get()) // Use .get() to resolve supplier
                     .pushReaction(PushReaction.DESTROY)));
 
     public static final Supplier<Block> FIREFLY_BUSH = BLOCKS.register("firefly_bush",
