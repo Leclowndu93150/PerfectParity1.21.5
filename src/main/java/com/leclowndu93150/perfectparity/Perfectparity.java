@@ -13,6 +13,8 @@ import com.leclowndu93150.perfectparity.sound.ModSounds;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +30,21 @@ public class PerfectParity {
 
 		ModBlocks.BLOCKS.register(modEventBus);
 		ModItems.ITEMS.register(modEventBus);
-		ModItems.initialize();
 		ModSounds.SOUND_EVENTS.register(modEventBus);
-		ModSounds.registerSounds();
 		ModParticles.PARTICLE_TYPES.register(modEventBus);
 		ModFeatures.FEATURES.register(modEventBus);
 		ModTreeDecoratorType.TREE_DECORATOR_TYPES.register(modEventBus);
 		ModEntityTypes.ENTITY_TYPES.register(modEventBus);
+
+		// Register client events only on client side
+		if (FMLEnvironment.dist == Dist.CLIENT) {
+			PerfectParityClient.registerClientEvents(modEventBus);
+		}
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
+			ModSounds.registerSounds(); // Move sound registration here
 			ModWorldGeneration.generateModWorldGen();
 			ModCustomTrades.registerCustomTrades();
 		});
