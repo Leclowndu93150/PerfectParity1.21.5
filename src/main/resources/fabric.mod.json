@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "perfectparity",
+	"version": "${version}",
+	"name": "Perfect Parity",
+	"description": "A near 1:1 backport of Minecraft 1.21.5, Spring to Life Update",
+	"authors": [
+		"timelord1102"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/perfect-parity/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.perfectparity.PerfectParity"
+		],
+		"client": [
+			"com.perfectparity.PerfectParityClient"
+		],
+		"fabric-datagen": [
+			"com.perfectparity.PerfectParityModDataGenerator"
+		]
+	},
+	"mixins": [
+		"perfect-parity.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.13",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

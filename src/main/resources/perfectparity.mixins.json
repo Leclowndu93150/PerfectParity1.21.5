@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.leclowndu93150.perfectparity.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "perfectparity.refmap.json",
+  "mixins": [
+    "CactusFlowerMixin",
+    "ChickenMixin",
+    "CowMixin",
+    "DeadBushMixin",
+    "GetBiomeWeatherMixin",
+    "PigMixin",
+    "SandMixin",
+    "SheepMixin",
+    "WolfInvoker",
+    "WolfMixin"
+  ],
+  "client": [
+    "MobRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
