@@ -50,7 +50,7 @@ public class ModItems {
     }
 
     // Separate event bus subscriber classes for different bus types
-    @EventBusSubscriber(modid = PerfectParity.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = "perfectparity", bus = EventBusSubscriber.Bus.MOD)
     public static class ModEvents {
         @SubscribeEvent
         public static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -83,7 +83,7 @@ public class ModItems {
         }
     }
 
-    @EventBusSubscriber(modid = PerfectParity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+    @EventBusSubscriber(modid = "perfectparity", bus = EventBusSubscriber.Bus.GAME)
     public static class NeoForgeEvents {
         @SubscribeEvent
         public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
